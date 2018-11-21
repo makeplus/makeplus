@@ -1,0 +1,185 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+our $VERSION = 'v0.0.1';
+
+#   use XXX;
+
+my (
+  $input_makefile,
+  $output_makefile,
+  $makeplus_root,
+  $makefile,
+  @test,
+  %test,
+);
+
+sub main {
+  ($input_makefile, $output_makefile, $makeplus_root) = @_;
+
+  if (not defined $ENV{MAKEPLUS_MAKEFILE} or
+      $output_makefile ne $ENV{MAKEPLUS_MAKEFILE} or
+      not -e $output_makefile
+  ) {
+    parse_makefile();
+
+    generate_makefile();
+
+    write_makefile();
+  }
+
+  print "$output_makefile\n";
+}
+
+my $re_rulestart = qr/^
+  [\ \t]*               # Ignore leading spaces
+  (?!\.[A-Z_]+)         # Skip built-in targets
+  ([^\#\=\:]+?)         # Target spec
+  [\ \t]*               # Possible spaces
+  ::? (?!=)             # Finally : or :: (but not := or ::=)
+/x;
+my $re_testspec = qr/(\$[\(\{]\+\S+)/;
+my $re_parse_testspec = qr/
+  \$[\(\{]              # $( or ${
+    (                   # Capture entire spec
+      \+                # Must begin with +
+      (\!?)             # Not operator (optional)
+      ([^\(\)\?\|\!]+)    # Test function (required)
+      (?:
+        \(
+          (\S+)         # Test arguments (optional)
+        \)
+      )?
+      (?:
+        \? ( [^\|\!]+ ) # Then target (optional)
+      )?
+      (?:
+        \| ( \S+? )     # Else target (optional)
+      )?
+      (!?)
+    )
+  [\}\)]                # } or )
+/x;
+
+sub parse_makefile {
+  open IN, $input_makefile
+    or die "Can't open '$input_makefile' for input";
+
+  while (defined(my $line = <IN>)) {
+    chomp $line;
+
+    next unless $line =~ s/$re_rulestart//;
+
+    my $rulespec = $1;
+
+    while ($line =~ s/\\$//) {
+      defined(my $next = <>) or last;
+      chomp $next;
+      $line .= $next;
+    }
+    while ($line =~ s/^.*?$re_testspec//) {
+      add_testspec($1);
+    }
+  }
+}
+
+sub add_testspec {
+  my ($spec) = @_;
+
+  die "Invalid makeplus test: '$spec'"
+    unless $spec =~ $re_parse_testspec;
+
+  my $var = $1;
+  my $val = {
+    not  => $2 || '',
+    test => $3 || die,
+    args => '',
+    then => $5 || '',
+    else => $6 || '',
+    must => $7 || '',
+  };
+
+  my $args = $4;
+  if (length $args) {
+    my @args;
+    while ($args =~ s/^('[^']*?'|"[^"]*?"|.+?),//) {
+      push @args, $1;
+      $args[-1] =~ s/%(\w+)/\$($1)/g;
+    }
+    push @args, $args;
+    $args[-1] =~ s/%(\w+)/\$($1)/g;
+    $val->{args} = join ' ', @args;
+  }
+
+  push @test, $var unless defined $test{$var};
+  $test{$var} = $val;
+}
+
+sub generate_makefile {
+  $makefile = <<"...";
+# MakePlus ($VERSION) generated Makefile:
+${\ format_prerequisites()}
+# MakePlus special rules:
++makeplus:
+	\@echo "MakePlus $VERSION"
+
+# Reset the default goal:
+.DEFAULT_GOAL :=
+...
+}
+
+sub format_prerequisites {
+  return '' unless @test;
+
+  my $o = "\n# MakePlus prerequisites:\n";
+
+  for my $var (@test) {
+    my ($not, $test, $args, $then, $else, $must) =
+      @{$test{$var}}{qw(not test args then else must)};
+    $then =~ s/^\%(.*)/\$($1)/;
+    $else =~ s/^\%(.*)/\$($1)/;
+    $o .=
+      "$var = \$(call MAKEPLUS_CHECK,$test,$args,$then,$else,$not,$must)\n";
+  }
+
+  $o .= <<'...';
+
+# Macro to call MakePlus prerequisite check function:
+makeplus_check = $(shell (rc=0; \
+  out=$$("$(MAKEPLUS_LIB)/makeplus-check" \
+         "$(MAKEPLUS_PATH)" '$(value makeplus_cmd)' \
+	 "$2" "$3" "$4" "$5" "$6") \
+  || rc=1; echo "$$rc $$out"))
+
+define MAKEPLUS_CHECK
+$(eval makeplus_cmd = $(if $(value $1),\$(value $1),$1)) \
+$(eval makeplus_out = $(makeplus_check)) \
+$(eval makeplus_rc = $(firstword $(makeplus_out))) \
+$(eval makeplus_text = $(wordlist 2,99999,$(makeplus_out))) \
+$(if $(filter $(makeplus_rc),0),$(makeplus_text),$(if $3,,$(eval \
+        stop-$1 := $(makeplus_text)) makeplus-stop-$1))
+endef
+
+# MakePlus stop rules:
+makeplus-stop-<ref-name>:
+	@echo "STOP - $(stop-false)"; exit 1
+...
+
+  return $o;
+}
+
+sub write_makefile {
+  open OUT, '>', $output_makefile
+    or die "Can't open '$output_makefile' for output";
+
+  print OUT $makefile;
+
+  close OUT;
+
+  print STDERR "MakePlus: $output_makefile\n"
+    if $ENV{MAKEPLUS_DEBUG};
+}
+
+main(@ARGV);

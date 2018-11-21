@@ -1,0 +1,16 @@
+#!/usr/bin/env testml-bash
+
+
+*command.run == *output
+  :"+: '{*command}'"
+
+
+=== Test 1
+--- command: make --no-print-directory -n install
+--- output
+install -d /usr/local/bin
+install bin/* /usr/local/bin
+install -d /usr/local/lib/makeplus
+install lib/makeplus/* /usr/local/lib/makeplus
+install -d /usr/local/share/makeplus
+install share/makeplus/* /usr/local/share/makeplus

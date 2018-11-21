@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -eu
+
+command=${1-}
+version=${2-}
+
+if ! which "$command" &>/dev/null; then
+  echo "The command '$command' is required but not available"
+  exit 1
+fi
+
+if [[ -n $version ]]; then
+  echo "Version checking not yet implemented for +require-command"
+  exit 1
+fi
+
+exit 0

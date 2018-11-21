@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+set -eu -o pipefail
+# set -x
+
+path=$1 cmd=$2 args=$3 pass=$4 fail=$5 not=$6 must=$7
+
+rc=0
+
+if [[ $cmd =~ ^\\ ]]; then
+  eval "makeplus-inline-check() { ${cmd#\\}; }"
+
+  out=$(PATH="$path" makeplus-inline-check $args) || rc=$?
+
+else
+  out=$(PATH="$path" "$cmd" $args) || rc=$?
+fi
+
+# echo "DEBUG rc=$rc out='$out' cmd='$cmd' args=($args)" \
+#      "pass=$pass fail=$fail not=$not must=$must" >&2
+
+if [[ $rc -eq 0 ]]; then
+  if [[ -n $not && -n $must ]]; then
+    echo "out"
+    exit 1
+
+  elif [[ -n $out ]]; then
+    echo "$out"
+    exit 0
+
+  elif [[ -z $not && -n $pass ]]; then
+    echo "$pass"
+    exit 0
+
+  elif [[ -n $not && -n $fail ]]; then
+    echo "$fail"
+    exit 0
+
+  elif [[ -z $not ]]; then
+    echo "+$cmd"
+    exit 0
+  fi
+
+else
+  if [[ -n $out ]]; then
+    echo "$out"
+    exit 1
+
+  elif [[ -n $not && -n $pass ]]; then
+    echo "$pass"
+    exit 0
+
+  elif [[ -z $not && -n $fail ]]; then
+    echo "$fail"
+    exit 0
+
+  elif [[ -n $not ]]; then
+    echo "+!$cmd"
+    exit 0
+  fi
+fi
+
+echo "TODO rc=$rc out='$out' cmd=$cmd args=($args)" \
+     "pass=$pass fail=$fail not=$not must=$must"
+exit 1

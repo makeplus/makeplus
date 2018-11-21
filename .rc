@@ -1,0 +1,16 @@
+#! sh
+
+# shellcheck disable=2128
+
+unset MAKEPLUS_ROOT
+
+test -n "$ZSH_VERSION" && MAKEPLUS_ROOT=$0
+test -n "$BASH_SOURCE" && MAKEPLUS_ROOT=$BASH_SOURCE
+
+if test -n "$MAKEPLUS_ROOT"; then
+  MAKEPLUS_ROOT=$(cd -P "$(dirname "$MAKEPLUS_ROOT")" && pwd)
+  export MAKEPLUS_ROOT
+  export PATH=$MAKEPLUS_ROOT/bin:$PATH
+else
+  echo "Could not enable 'MakePlus' for your environment"
+fi

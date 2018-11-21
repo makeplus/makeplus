@@ -1,0 +1,41 @@
+#!/bin/bash
+
+set -eu -o pipefail
+
+main() {
+  get-options "$@"
+
+  "command:$command" "${arguments[@]}"
+}
+
+command:local() {
+  error "makeplus --local not yet implemented"
+}
+
+command:update() {
+  error "makeplus --update not yet implemented"
+}
+
+get-options() {
+  # makeplus_root=$(cd -P "$(dirname "$0")/.." && pwd)
+  arguments=()
+  for arg; do
+    case "$arg" in
+      --local) command=local;;
+      --update) command=update;;
+      --*) error "Invalid option makeplus option: '$arg'";;
+      *) arguments+=("$arg");;
+    esac
+  done
+
+}
+
+error() {
+  echo -n "Error:" >&2
+  for line; do
+    echo "$line" >&2
+  done
+  exit 1
+}
+
+[[ $0 != "${BASH_SOURCE[0]}" ]] || main "$@"
