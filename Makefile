@@ -39,3 +39,4 @@ realclean: clean
 #------------------------------------------------------------------------------
 $(TESTML_ROOT):
 	git clone --depth=1 --quiet $(TESTML_REPO) $@
+	(cd $@ && git fetch origin ext/perl5:ext/perl5 && make ext/perl5)
