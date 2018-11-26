@@ -1,0 +1,31 @@
+#!/usr/bin/env testml-bash
+
+
+*makefile.make-out(*command) == *stdout
+
+*makefile.make-err(*command) =~ *stderr
+
+
+=== ${+require-command(echo)}
+--- command: make rule
+--- makefile
+include $(shell bin/make+)
+
+${+require-command(echo)}
+
+rule:
+	@echo OK
+
+--- stdout: OK
+
+=== ${+require-command(echo/never)}
+--- command: make rule
+--- makefile
+include $(shell bin/make+)
+
+${+require-command(echo/never)}
+
+rule:
+	@echo OK
+
+--- stderr: The command 'echo/never' is required but not available\.  Stop\.

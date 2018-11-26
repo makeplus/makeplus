@@ -5,7 +5,7 @@ use warnings;
 
 our $VERSION = 'v0.0.1';
 
-#   use XXX;
+# use XXX;
 
 my (
   $input_makefile,
@@ -14,6 +14,7 @@ my (
   $makefile,
   @test,
   %test,
+  @cmds,
 );
 
 sub main {
@@ -46,7 +47,7 @@ my $re_parse_testspec = qr/
     (                   # Capture entire spec
       \+                # Must begin with +
       (\!?)             # Not operator (optional)
-      ([^\(\)\?\|\!]+)    # Test function (required)
+      ([-\w]+)          # Test function (required)
       (?:
         \(
           (\S+)         # Test arguments (optional)
@@ -62,6 +63,19 @@ my $re_parse_testspec = qr/
     )
   [\}\)]                # } or )
 /x;
+my $re_parse_command = qr/^
+  \$[\(\{]              # $( or ${
+    (                   # Capture entire spec
+      \+                # Must begin with +
+      ([-\w]+)          # Command name
+      (?:
+        \(
+          (\S+)         # Command arguments (optional)
+        \)
+      )?
+    )
+  [\}\)]                # } or )
+/x;
 
 sub parse_makefile {
   open IN, $input_makefile
@@ -70,19 +84,31 @@ sub parse_makefile {
   while (defined(my $line = <IN>)) {
     chomp $line;
 
-    next unless $line =~ s/$re_rulestart//;
-
-    my $rulespec = $1;
-
-    while ($line =~ s/\\$//) {
-      defined(my $next = <>) or last;
-      chomp $next;
-      $line .= $next;
+    if ($line =~ qr/$re_parse_command/) {
+        add_command($1, $2, $3);
     }
-    while ($line =~ s/^.*?$re_testspec//) {
-      add_testspec($1);
+    elsif ($line =~ s/$re_rulestart//) {
+
+      my $rulespec = $1;
+
+      while ($line =~ s/\\$//) {
+        defined(my $next = <>) or last;
+        chomp $next;
+        $line .= $next;
+      }
+      while ($line =~ s/^.*?$re_testspec//) {
+        add_testspec($1);
+      }
     }
   }
+}
+
+sub add_command {
+  my ($spec, $cmd, $args) = @_;
+
+  $args = parse_args($args);
+
+  push @cmds, [$spec, $cmd, $args];
 }
 
 sub add_testspec {
@@ -95,39 +121,64 @@ sub add_testspec {
   my $val = {
     not  => $2 || '',
     test => $3 || die,
-    args => '',
     then => $5 || '',
     else => $6 || '',
     must => $7 || '',
   };
 
-  my $args = $4;
-  if (length $args) {
-    my @args;
-    while ($args =~ s/^('[^']*?'|"[^"]*?"|.+?),//) {
-      push @args, $1;
-      $args[-1] =~ s/%(\w+)/\$($1)/g;
-    }
-    push @args, $args;
-    $args[-1] =~ s/%(\w+)/\$($1)/g;
-    $val->{args} = join ' ', @args;
-  }
+  $val->{args} = parse_args($4);
 
   push @test, $var unless defined $test{$var};
   $test{$var} = $val;
 }
 
+sub parse_args {
+  my ($args) = @_;
+
+  return '' unless length $args;
+
+  my @args;
+  while ($args =~ s/^('[^']*?'|"[^"]*?"|.+?),//) {
+    push @args, $1;
+    $args[-1] =~ s/%(\w+)/\$($1)/g;
+  }
+  push @args, $args;
+  $args[-1] =~ s/%(\w+)/\$($1)/g;
+
+  return join ' ', @args;
+}
+
 sub generate_makefile {
   $makefile = <<"...";
 # MakePlus ($VERSION) generated Makefile:
+${\ format_commands()}
 ${\ format_prerequisites()}
-# MakePlus special rules:
-+makeplus:
-	\@echo "MakePlus $VERSION"
-
+${\ format_rules()}
 # Reset the default goal:
 .DEFAULT_GOAL :=
 ...
+}
+
+sub format_commands {
+  return '' unless @cmds;
+
+  my $o = "\n# MakePlus special commands\n";
+
+  for my $val (@cmds) {
+    my ($var, $cmd, $args) = @$val;
+    $o .= "$var = \$(call MAKEPLUS_CMD,$cmd,$args)\n";
+  }
+
+  $o .= <<'...';
+
+# Macro to call a MakePlus special command:
+define MAKEPLUS_CMD
+$(eval makeplus_out = $(shell $(MAKEPLUS_LIB)/$1 $2)) \
+$(if $(makeplus_out),$(error $(makeplus_out)))
+endef
+...
+
+  return $o;
 }
 
 sub format_prerequisites {
@@ -168,6 +219,15 @@ makeplus-stop-<ref-name>:
 ...
 
   return $o;
+}
+
+sub format_rules {
+  return <<"...";
+# MakePlus special rules:
++makeplus:
+	\@echo "MakePlus $VERSION"
+
+...
 }
 
 sub write_makefile {
