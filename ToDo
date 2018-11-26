@@ -1,0 +1,25 @@
+- v0.0.1
+  - Get demos working
+    - synopsis
+    - red-fish-blue-fish
+    - docker-server
+
+- v0.0.2
+  - Add CI (travis)
+  - Set up DNS for makeplus.org
+  - Make makeplus.org website (site branch)
+  - Write the `old` function
+
+- Beyond
+  - Write Tech Talk for MakePlus (talk/2018-zr branch)
+
+== Ideas
+* Rules for something done but not recently
+  * Git Pull done in past 24 hours
+* Something done at least once
+  * apt-get update
+
+
+== Notes
+- $$PPID
+  pid = $(shell echo $$PPID)
