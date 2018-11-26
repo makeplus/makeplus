@@ -54,7 +54,7 @@ Consider this Makefile:
 ```
 include $(shell make+)
 
-$(+require-command echo)
+${+require-command(echo)}
 
 maybe = $((RANDOM%2))
 
@@ -66,7 +66,7 @@ yes no:
 
 All MakePlus additions begin with a `+` character.
 
-The `$(+require-command echo)` line is a simple way for a Makefile to declare
+The `${+require-command(echo)}` line is a simple way for a Makefile to declare
 its dependency on a system command. See "MakePlus Special Commands" below.
 
 The primary capability to use MakePlus for is function based dependency
@@ -243,7 +243,34 @@ These basic utilities are already installed on most systems:
   Perl is not needed if you bundle MakePlus directly into your project. See
   "Per Project Install" above.
 
-# Testing
+# Development and Contribution
+
+Nothing great is created by one person in isolation. If you like the concept of
+MakePlus and have ideas about how it currently is not good enough, please
+contribute!
+
+* Report bugs or feature ideas
+
+  https://github.com/makeplus/makeplus/issues
+
+* Chat with MakePlus developers
+
+  `#makeplus` on irc.freenode.net
+
+## Debugging
+
+MakePlus generates a temporary Makefile that you never see. To see it, set
+`MAKEPLUS_MAKEFILE` environment variable to a file path. If the file does not
+exist, MakePlus will put the generated file there. If it does exist already,
+MakePlus will use it. That way you can actually modify it to figure things out.
+
+Use GNU make's special variables to print Makefile processing info:
+
+* `$(info ...)`
+* `$(warning ...)`
+* `$(error ...)`
+
+## Testing
 
 To run the MakePlus test suite, clone the source repository per above, and run
 `make test` from the top level directory.
@@ -262,6 +289,14 @@ will be very soon. All the important things are really working. See the `test`
 suite if you are curious.
 
 # Change Log
+
+* **v0.0.2 - Nov 26 2018**
+
+  * Implement the special commands processing
+  * Add Development and Contribution section to doc
+  * Add a happy-hour demo
+  * Fix a couple test fails with OSX output
+  * Add ability to test failure conditions
 
 * **v0.0.1 - Nov 24 2018**
 
