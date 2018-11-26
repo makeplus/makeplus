@@ -1,0 +1,225 @@
+---- config
+# Basic config options.
+title: MakePlus - The NEW GNU make!
+indent: 4
+auto_size: 1
+vim_opts: '-u NONE'
+skip: 0
+vimrc: |
+  unmap AA
+  unmap QQ
+  set nohlsearch
+  au BufRead * syn match vroom_command "\v^\s*\$.*$"
+  hi vroom_command  term=bold,italic,underline ctermfg=Yellow
+
+  map j /^\s\+\$<cr>
+  map ' :set bg=light<cr>
+  map k ?^\s\+\$<cr>
+  map 1 :w! Makefile<cr>
+  map 2 :!perl -pi -e 's/^    //' Makefile && sed -i '/^\$/d' Makefile<cr>
+  map 3 :exec '!clear;echo;echo;' . substitute(substitute(getline('.'), '^\s\+\$\s\+', '', ''), '\~', '$t/', 'g')<cr>
+  map <ENTER> 123
+  map q ;
+  map qq :q!<cr>
+
+  " map 1 :wincmd o<cr>
+  " map 2 :wincmd v<cr>
+  map \1 :w<cr>
+
+---- center
+MakePlus - GNU make + NEW stuff
+
+by Ingy döt Net
+
+ZipRecruiter Tech Week
+November 29 2018
+
+----
+                 ▄▄▄  ▄▄▄            ▄▄                     ▄▄▄▄▄▄    ▄▄▄▄                             ▄▄
+                 ███  ███            ██                     ██▀▀▀▀█▄  ▀▀██                             ██
+                 ████████   ▄█████▄  ██ ▄██▀    ▄████▄      ██    ██    ██      ██    ██  ▄▄█████▄     ██
+                 ██ ██ ██   ▀ ▄▄▄██  ██▄██     ██▄▄▄▄██     ██████▀     ██      ██    ██  ██▄▄▄▄ ▀     ██
+                 ██ ▀▀ ██  ▄██▀▀▀██  ██▀██▄    ██▀▀▀▀▀▀     ██          ██      ██    ██   ▀▀▀▀██▄     ▀▀
+                 ██    ██  ██▄▄▄███  ██  ▀█▄   ▀██▄▄▄▄█     ██          ██▄▄▄   ██▄▄▄███  █▄▄▄▄▄██     ▄▄
+                 ▀▀    ▀▀   ▀▀▀▀ ▀▀  ▀▀   ▀▀▀    ▀▀▀▀▀      ▀▀           ▀▀▀▀    ▀▀▀▀ ▀▀   ▀▀▀▀▀▀      ▀▀
+----
+        ▄▄▄▄▄▄                                            ▄▄   ▄▄ ▄▄                   ▄▄▄   ▄▄
+        ▀▀██▀▀                                            ██   ▀▀ ▀▀      ██           ███   ██              ██
+          ██     ██▄████▄   ▄███▄██  ▀██  ███        ▄███▄██   ▄████▄   ███████        ██▀█  ██   ▄████▄   ███████
+          ██     ██▀   ██  ██▀  ▀██   ██▄ ██        ██▀  ▀██  ██▀  ▀██    ██           ██ ██ ██  ██▄▄▄▄██    ██
+          ██     ██    ██  ██    ██    ████▀        ██    ██  ██    ██    ██           ██  █▄██  ██▀▀▀▀▀▀    ██
+        ▄▄██▄▄   ██    ██  ▀██▄▄███     ███         ▀██▄▄███  ▀██▄▄██▀    ██▄▄▄        ██   ███  ▀██▄▄▄▄█    ██▄▄▄
+        ▀▀▀▀▀▀   ▀▀    ▀▀   ▄▀▀▀ ██     ██            ▀▀▀ ▀▀    ▀▀▀▀       ▀▀▀▀        ▀▀   ▀▀▀    ▀▀▀▀▀      ▀▀▀▀
+                            ▀████▀▀   ███
+----
+                 ▄▄▄  ▄▄▄     ▄▄     ▄▄   ▄▄▄  ▄▄▄▄▄▄▄▄                                ▄▄
+                 ███  ███    ████    ██  ██▀   ██▀▀▀▀▀▀                                ██
+                 ████████    ████    ██▄██     ██                  ████▄██▄   ▄█████▄  ██ ▄██▀    ▄████▄
+                 ██ ██ ██   ██  ██   █████     ███████             ██ ██ ██   ▀ ▄▄▄██  ██▄██     ██▄▄▄▄██
+                 ██ ▀▀ ██   ██████   ██  ██▄   ██                  ██ ██ ██  ▄██▀▀▀██  ██▀██▄    ██▀▀▀▀▀▀
+                 ██    ██  ▄██  ██▄  ██   ██▄  ██▄▄▄▄▄▄            ██ ██ ██  ██▄▄▄███  ██  ▀█▄   ▀██▄▄▄▄█
+                 ▀▀    ▀▀  ▀▀    ▀▀  ▀▀    ▀▀  ▀▀▀▀▀▀▀▀            ▀▀ ▀▀ ▀▀   ▀▀▀▀ ▀▀  ▀▀   ▀▀▀    ▀▀▀▀▀
+
+
+
+          ▄▄▄▄   ▄▄▄▄▄▄    ▄▄▄▄▄▄▄▄     ▄▄     ▄▄▄▄▄▄▄▄               ▄▄        ▄▄▄▄      ▄▄      ▄▄▄▄▄▄   ▄▄▄   ▄▄
+        ██▀▀▀▀█  ██▀▀▀▀██  ██▀▀▀▀▀▀    ████    ▀▀▀██▀▀▀              ████     ██▀▀▀▀█    ████     ▀▀██▀▀   ███   ██
+       ██        ██    ██  ██          ████       ██                 ████    ██          ████       ██     ██▀█  ██
+       ██  ▄▄▄▄  ███████   ███████    ██  ██      ██                ██  ██   ██  ▄▄▄▄   ██  ██      ██     ██ ██ ██
+       ██  ▀▀██  ██  ▀██▄  ██         ██████      ██                ██████   ██  ▀▀██   ██████      ██     ██  █▄██
+        ██▄▄▄██  ██    ██  ██▄▄▄▄▄▄  ▄██  ██▄     ██               ▄██  ██▄   ██▄▄▄██  ▄██  ██▄   ▄▄██▄▄   ██   ███
+          ▀▀▀▀   ▀▀    ▀▀▀ ▀▀▀▀▀▀▀▀  ▀▀    ▀▀     ▀▀               ▀▀    ▀▀     ▀▀▀▀   ▀▀    ▀▀   ▀▀▀▀▀▀   ▀▀   ▀▀▀
+----
+== MakePlus
+
+* MakePlus is just GNU make
+* Plus some cool new features
+  * Functional rule dependency
+    (Functions instead of just timestamps)
+* You turn MakePlus on with one include
+* The new syntax things begin with a '+'
+
+---- .mk
+# Print YES or NO
+include $(shell make+)
+
+maybe = return $((RANDOM % 2))
+
+yes-or-no: $(+maybe?yes|no)
+
+yes no:
+	@echo $@ | tr a-z A-Z
+
+
+$ make yes-or-no
+
+---- .mk
+$ make fish
+# Print 1 Fish, 2 Fish, Red Fish, Blue Fish
+include $(shell make+)
+
+50-50 = return $((RANDOM % 2))
+
+fish: 1-fish $(+50-50?2-fish)
+
+1-fish: $(+50-50?red-1-fish|blue-1-fish)
+2-fish: $(+50-50?red-2-fish|blue-2-fish)
+
+%-1-fish:
+	@echo -e "$($*)$$fish$(norm)"
+%-2-fish:
+	@echo -e "$($*)$$fish$(norm)"
+
+define fish
+                     ___            __________
+                    /   \          /          \\
+                 __/_/_/_\________/ / / /  /   \\
+          ,,----'                 ------  / /   \           _
+        ,/   ) ) ) ) ) ) ) ) ) ) ) ) ) ) )\/ /  /        ,/' \\
+    ./''  ,\  ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )\ /       /'  /  \\
+ ./''  O , ,\) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )------' / / / /
+ (____ , , , ,|) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )----- /
+ \.  \ , , , | ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ----- \\
+   `\.   ___/ ) )_______  ) ) ) ) ) ) ) ) ) ) ) ------. \ \ \ \\
+      ``\..) ) ) )______\) ) ) ) ) ) ) ) ) ) /         \.  \  /
+           `\..    _____/ ) ) ) ) ) ) ) ) /--__          `\._/
+               ``\________________------'''\   \\
+                   \ \ \/           \  \  \ \  /
+                    \__/             \________/
+endef
+export fish
+
+red = \033[31m
+blue = \033[34m
+norm = \033[39m
+
+----
+== How it Works
+
+* The `include $(shell make+)` line
+* Pulls in a small makefile
+* Which calls a program
+* That scans your Makefiles
+* Generates a new Magic Makefile
+* And includes it
+
+* $(+50-50?red-1-fish|blue-1-fish) is a variable
+* Variables can use almost *any* characters
+  * No spaces = : #
+
+* Lots of make magic
+* But simple on the outside
+
+---- .mk
+$ make me-happy?
+$ make me-happy? happy=10
+# Find out it it's Happy Hour
+include $(shell make+)
+
+happy ?= 18
+hour := $(shell perl -e 'print((localtime)[2])')
+is-it = [[ $1 -eq $2 ]]
+early-for = [[ $2 -lt $1 ]]
+
+me-happy?: ${+is-it(%happy,%hour)?yes|no}
+
+yes: ; $(say) "IT'S HAPPY HOUR!!! :-)"
+
+no: ${+early-for(%happy,%hour)?too-early|too-late}
+
+too-%: ; $(say) "You're $(subst -, ,$@) for happy hour :-("
+
+say :=  @clear; echo; figlet -c -W -w$(shell tput cols)
+
+${+require-command(figlet)}
+
+---- .mk
+# Start Stop and Test a Docker Server
+include $(shell make+)
+
+MAKEPLUS_PATH := $(PWD)
+DOCKER_APP := simple-http-server
+PORT ?= 8000
+
+start: ${+!docker-running(%DOCKER_APP)!} \
+	${+docker-built(%DOCKER_APP)|build}
+	docker run --rm -tdp $(PORT):$(PORT) ${DOCKER_APP}
+
+stop: ${+docker-running(%DOCKER_APP)!}
+	docker stop $<
+
+contact-server := curl -s localhost:$(PORT) &>/dev/null
+test: $(+contact-server?pass|fail)
+
+clean:
+	docker rmi $(DOCKER_APP)
+
+build:
+	docker build --tag $(DOCKER_APP) .
+
+pass fail: ; @echo $@ | tr a-z A-Z
+
+${+require-command(docker)}
+
+----
+                        ▄▄                            ▄▄▄▄
+                        ██                            ▀▀██                                                          ██
+    ████▄██▄   ▄█████▄  ██ ▄██▀    ▄████▄   ██▄███▄     ██      ██    ██  ▄▄█████▄            ██▄████▄   ▄████▄   ███████
+    ██ ██ ██   ▀ ▄▄▄██  ██▄██     ██▄▄▄▄██  ██▀  ▀██    ██      ██    ██  ██▄▄▄▄ ▀            ██▀   ██  ██▄▄▄▄██    ██
+    ██ ██ ██  ▄██▀▀▀██  ██▀██▄    ██▀▀▀▀▀▀  ██    ██    ██      ██    ██   ▀▀▀▀██▄            ██    ██  ██▀▀▀▀▀▀    ██
+    ██ ██ ██  ██▄▄▄███  ██  ▀█▄   ▀██▄▄▄▄█  ███▄▄██▀    ██▄▄▄   ██▄▄▄███  █▄▄▄▄▄██     ██     ██    ██  ▀██▄▄▄▄█    ██▄▄▄
+    ▀▀ ▀▀ ▀▀   ▀▀▀▀ ▀▀  ▀▀   ▀▀▀    ▀▀▀▀▀   ██ ▀▀▀       ▀▀▀▀    ▀▀▀▀ ▀▀   ▀▀▀▀▀▀      ▀▀     ▀▀    ▀▀    ▀▀▀▀▀      ▀▀▀▀
+                                            ██
+----
+        ▄▄ ▄▄                      ▄▄                            ▄▄▄▄
+       ▄█  ██                      ██                            ▀▀██
+     █████████ ████▄██▄   ▄█████▄  ██ ▄██▀    ▄████▄   ██▄███▄     ██      ██    ██  ▄▄█████▄
+      ▄█  ██   ██ ██ ██   ▀ ▄▄▄██  ██▄██     ██▄▄▄▄██  ██▀  ▀██    ██      ██    ██  ██▄▄▄▄ ▀
+    █████████  ██ ██ ██  ▄██▀▀▀██  ██▀██▄    ██▀▀▀▀▀▀  ██    ██    ██      ██    ██   ▀▀▀▀██▄
+     ▄█  ██    ██ ██ ██  ██▄▄▄███  ██  ▀█▄   ▀██▄▄▄▄█  ███▄▄██▀    ██▄▄▄   ██▄▄▄███  █▄▄▄▄▄██
+     ▀▀  ▀     ▀▀ ▀▀ ▀▀   ▀▀▀▀ ▀▀  ▀▀   ▀▀▀    ▀▀▀▀▀   ██ ▀▀▀       ▀▀▀▀    ▀▀▀▀ ▀▀   ▀▀▀▀▀▀
+                                                       ██
+
+
+----
+== THE END
