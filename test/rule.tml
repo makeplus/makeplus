@@ -112,9 +112,9 @@ rule14: $(+!true?yes)
 === $(+false?yes)           # fail / (w/then) / nothing
 --- command: make rule13
 --- ^makefile
---- stdout: make[1]: Nothing to be done for 'rule13'.
+--- stdout
 
 === $(+!true?yes)           # pass / negate / (w/then) / nothing
 --- command: make rule14
 --- ^makefile
---- stdout: make[1]: Nothing to be done for 'rule14'.
+--- stdout
