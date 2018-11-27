@@ -1,65 +1,75 @@
 #!/usr/bin/env bash
 
-set -eu -o pipefail
-# set -x
+main() {
+  set -eu -o pipefail
 
-path=$1 cmd=$2 args=$3 pass=$4 fail=$5 not=$6 must=$7
+  [[ -z ${MAKEPLUS_TRACE-} ]] || set -x
 
-rc=0
+  path=$1 cmd=$2 args=$3 pass=$4 fail=$5 not=$6 must=$7
 
-if [[ $cmd =~ ^\\ ]]; then
-  eval "makeplus-inline-check() { ${cmd#\\}; }"
+  # TODO
+  # support ./foo bin/foo cmd
+  # sanity check that cmd is runnable
 
-  out=$(PATH="$path" makeplus-inline-check $args) || rc=$?
+  rc=0
+  if [[ $cmd =~ ^\\ ]]; then
+    cmd=${cmd#\\}
+    eval "makeplus-inline-check() { $cmd; }"
 
-else
-  out=$(PATH="$path" "$cmd" $args) || rc=$?
-fi
+    out=$(PATH="$path" makeplus-inline-check $args) || rc=$?
 
-# echo "DEBUG rc=$rc out='$out' cmd='$cmd' args=($args)" \
-#      "pass=$pass fail=$fail not=$not must=$must" >&2
-
-if [[ $rc -eq 0 ]]; then
-  if [[ -n $not && -n $must ]]; then
-    echo "out"
-    exit 1
-
-  elif [[ -n $out ]]; then
-    echo "$out"
-    exit 0
-
-  elif [[ -z $not && -n $pass ]]; then
-    echo "$pass"
-    exit 0
-
-  elif [[ -n $not && -n $fail ]]; then
-    echo "$fail"
-    exit 0
-
-  elif [[ -z $not ]]; then
-    echo "+$cmd"
-    exit 0
+  else
+    out=$(PATH="$path" "$cmd" $args) || rc=$?
   fi
 
-else
-  if [[ -n $out ]]; then
-    echo "$out"
-    exit 1
+  [[ -z ${MAKEPLUS_DEBUG-} ]] ||
+    echo "DEBUG rc=$rc out='$out' cmd='$cmd' args=($args)" \
+         "pass=$pass fail=$fail not=$not must=$must" >&2
 
-  elif [[ -n $not && -n $pass ]]; then
-    echo "$pass"
-    exit 0
+  [[ -z $not ]] || rc=$((rc - 1))
 
-  elif [[ -z $not && -n $fail ]]; then
-    echo "$fail"
-    exit 0
+  if [[ $rc -eq 0 ]]; then
+    if [[ -n $out ]]; then
+      echo "$out"
+      exit 0
 
-  elif [[ -n $not ]]; then
-    echo "+!$cmd"
-    exit 0
+    elif [[ -n $pass ]]; then
+      echo "$pass"
+      exit 0
+
+    elif [[ -n $must ]]; then
+      exit 0
+
+    else
+      echo "+$not$cmd"
+      exit 0
+    fi
+
+  else
+    if [[ -n $must ]]; then
+      exit 2
+
+    elif [[ -n $fail ]]; then
+      echo "$fail"
+      exit 0
+
+    elif [[ -n $out ]]; then
+      echo "$out"
+      exit 1
+    fi
   fi
-fi
 
-echo "TODO rc=$rc out='$out' cmd=$cmd args=($args)" \
-     "pass=$pass fail=$fail not=$not must=$must"
-exit 1
+  echo "TODO rc=$rc out='$out' cmd=$cmd args=($args)" \
+      "pass=$pass fail=$fail not=$not must=$must"
+
+  exit 1
+}
+
+# end() {
+#   rc=$?
+#   ! $running || return 3
+#   [[ $rc -le 2 ]] || return 4
+#   return $rc
+# }
+
+[[ $0 != "${BASH_SOURCE[0]}" ]] || main "$@"

@@ -1,15 +1,13 @@
 #!/usr/bin/env testml-bash
 
 
-*makefile.make-out(*command) == *stdout
-  :"+: '{*command}'"
+*make.make-rule(*rule) == *out
+  :"+: '{*rule}'"
 
 
 === Test 1
---- command: make +makeplus
---- makefile
+--- rule: +makeplus
+--- make
 include $(shell bin/make+)
-
---- stdout
+--- out
 MakePlus v0.0.1
-

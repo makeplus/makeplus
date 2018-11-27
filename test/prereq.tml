@@ -1,0 +1,123 @@
+#!/usr/bin/env testml-bash
+
+
+*base.make-out(*make) == *out
+
+
+=== Makefile definition
+--- base
+include $(shell bin/make+)
+
+My-True = true
+My-False = false
+ot = [[ $1 -ot $2 ]]
+
+YES = yes
+NO = no
+
+yes: ; @echo YES
+no: ; @echo NO
+
+FILE = $(shell mktemp)
+
++true:
++!false:
+
+.PHONY: test
+
+
+=== $(+true)
+--- make
+test: $(+true) ; @echo OK
+--- ^base
+--- out: OK
+
+=== $(+true!)
+--- make
+test: $(+true!) ; @echo OK
+--- ^base
+--- out: OK
+
+=== ${+true(1,"two",?tru)}
+--- make
+test: ${+true(1,'two',?tru)} ; @echo OK
+--- ^base
+--- out: OK
+
+=== $(+!false)
+--- make
+test: $(+!false) ; @echo OK
+--- ^base
+--- out: OK
+
+=== $(+!My-False!)
+--- make
+test: $(+!My-False) ; @echo OK
+--- ^base
+--- out: OK
+
+=== $(+true?yes)
+--- make
+test: $(+true?yes)
+--- ^base
+--- out: YES
+
+=== $(+true?yes!)
+--- make
+test: $(+true?yes!)
+--- ^base
+--- out: YES
+
+=== $(+!true|yes)
+--- make
+test: $(+!true|yes)
+--- ^base
+--- out: YES
+
+=== $(+false?yes|no)
+--- make
+test: $(+false?yes|no)
+--- ^base
+--- out: NO
+
+=== $(+!true?yes|no)
+--- make
+test: $(+!true?yes|no)
+--- ^base
+--- out: NO
+
+=== $(+true?%YES|%NO)
+--- make
+test: $(+true?%YES|%NO)
+--- ^base
+--- out: YES
+
+=== $(+ot(file1,file2)?yes)
+--- make
+test: ${+ot(Makefile,%FILE)?%YES|%NO}
+--- ^base
+--- out: YES
+
+=== $(+My-True?yes)
+--- make
+test: $(+My-True?yes)
+--- ^base
+--- out: YES
+
+=== $(+false?yes)
+--- make
+test: $(+false?yes)
+--- ^base
+--- out
+
+=== $(+!true?yes)
+--- make
+test: $(+!true?yes)
+--- ^base
+--- out
+
+=== $(+true!) $(+true!)
+--- make
+test: $(+true!) $(+true!) ; @echo OK
+--- ^base
+--- out: OK

@@ -14,6 +14,8 @@ my (
   $makefile,
   @test,
   %test,
+  @stop,
+  %stop,
   @cmds,
 );
 
@@ -45,28 +47,28 @@ my $re_testspec = qr/(\$[\(\{]\+\S+)/;
 my $re_parse_testspec = qr/
   \$[\(\{]              # $( or ${
     (                   # Capture entire spec
-      \+                # Must begin with +
+      \+                # Begin with +
       (\!?)             # Not operator (optional)
-      ([-\w]+)          # Test function (required)
+      ([^\?\|\!\(\s]+)  # Test function (required)
       (?:
         \(
-          (\S+)         # Test arguments (optional)
+          (\S+?)        # Test arguments (optional)
         \)
       )?
       (?:
-        \? ( [^\|\!]+ ) # Then target (optional)
+        \? ( [^\|\!\s]+ ) # Then target (optional)
       )?
       (?:
-        \| ( \S+? )     # Else target (optional)
+        \| ( [^\!\s]+? ) # Else target (optional)
       )?
-      (!?)
+      (!?)              # Must operator (optional)
     )
   [\}\)]                # } or )
 /x;
 my $re_parse_command = qr/^
   \$[\(\{]              # $( or ${
     (                   # Capture entire spec
-      \+                # Must begin with +
+      \+                # Begin with +
       ([-\w]+)          # Command name
       (?:
         \(
@@ -114,19 +116,24 @@ sub add_command {
 sub add_testspec {
   my ($spec) = @_;
 
-  die "Invalid makeplus test: '$spec'"
-    unless $spec =~ $re_parse_testspec;
 
-  my $var = $1;
+  my ($var, $not, $test, $args, $then, $else, $must) =
+    ($spec =~ $re_parse_testspec)
+      or die "Invalid makeplus test: '$spec'";
+
   my $val = {
-    not  => $2 || '',
-    test => $3 || die,
-    then => $5 || '',
-    else => $6 || '',
-    must => $7 || '',
+    not  => $not || '',
+    test => $test || die,
+    args => parse_args($args),
+    then => $then || '',
+    else => $else || '',
+    must => $must || '',
   };
 
-  $val->{args} = parse_args($4);
+  if ($must and not $stop{$test}) {
+    $stop{$test} = 1;
+    push @stop, [$test, $not];
+  }
 
   push @test, $var unless defined $test{$var};
   $test{$var} = $val;
@@ -153,6 +160,7 @@ sub generate_makefile {
 # MakePlus ($VERSION) generated Makefile:
 ${\ format_commands()}
 ${\ format_prerequisites()}
+${\ format_stops()}
 ${\ format_rules()}
 # Reset the default goal:
 .DEFAULT_GOAL :=
@@ -202,21 +210,40 @@ makeplus_check = $(shell (rc=0; \
   out=$$("$(MAKEPLUS_LIB)/makeplus-check" \
          "$(MAKEPLUS_PATH)" '$(value makeplus_cmd)' \
 	 "$2" "$3" "$4" "$5" "$6") \
-  || rc=1; echo "$$rc $$out"))
+  || rc=$$?; echo "$$rc $$out"))
 
 define MAKEPLUS_CHECK
 $(eval makeplus_cmd = $(if $(value $1),\$(value $1),$1)) \
 $(eval makeplus_out = $(makeplus_check)) \
 $(eval makeplus_rc = $(firstword $(makeplus_out))) \
 $(eval makeplus_text = $(wordlist 2,99999,$(makeplus_out))) \
-$(if $(filter $(makeplus_rc),0),$(makeplus_text),$(if $3,,$(eval \
-        stop-$1 := $(makeplus_text)) makeplus-stop-$1))
+$(if $(filter $(makeplus_rc),0),$(makeplus_text),\
+$(if $(filter $(makeplus_rc),2),makeplus-stop-$1))
 endef
 
 # MakePlus stop rules:
 makeplus-stop-<ref-name>:
 	@echo "STOP - $(stop-false)"; exit 1
 ...
+
+  return $o;
+}
+
+sub format_stops {
+  return '' unless @stop;
+
+  my $o = "\n# MakePlus STOP rules:\n";
+
+  for my $stop (@stop) {
+    my ($test, $not) = @$stop;
+    $o .= <<"...";
+
+makeplus-stop-$test:
+	\@echo "STOP: prerequisite '+$not$test' must be true" >&2
+	\@exit 1
+...
+
+  }
 
   return $o;
 }

@@ -1,0 +1,22 @@
+#!/usr/bin/env testml-bash
+
+
+*base.make-err(*make) =~ *err
+
+
+=== Makefile definition
+--- base
+include $(shell bin/make+)
+
+
+=== $(+false!)
+--- make
+test: $(+false!)
+--- ^base
+--- err: STOP: prerequisite '\+false' must be true
+
+=== $(+!true!)
+--- make
+test: $(+!true!)
+--- ^base
+--- err: STOP: prerequisite '\+!true' must be true
