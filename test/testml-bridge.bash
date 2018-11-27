@@ -1,7 +1,11 @@
 #! bash
 
 TestMLBridge.make-out() (
-  run-command "$@"
+  base=$1
+  make=${2-}
+  rule=${3:-test}
+
+  run-command "$base" "$make" "$rule"
 
   echo "$stdout"
 
@@ -11,35 +15,48 @@ TestMLBridge.make-out() (
 )
 
 TestMLBridge.make-err() (
-  run-command "$@"
+  base=$1
+  make=${2-}
+  rule=test
+
+  run-command "$base" "$make" "$rule"
 
   cat "$stderr"
 
   rm "$makefile" "$stderr"
 )
 
+TestMLBridge.make-rule() (
+  make=$1
+  rule=$2
+
+  TestMLBridge.make-out '' "$make" "$rule"
+)
+
 TestMLBridge.run() (
   set -f
 
-  IFS=" " read -r -a cmd <<< "$*"
+  IFS=" " read -r -a rule <<< "$*"
 
-  "${cmd[@]}"
+  "${rule[@]}"
 )
 
 run-command() {
   set -f
 
   makefile=$(mktemp)
-  echo "$1" > "$makefile"
-
-  IFS=" " read -r -a args <<< "${2#make}"
+  (
+    echo "$1"
+    echo
+    echo "${2-}"
+  ) > "$makefile"
 
   stderr=$(mktemp)
 
   stdout=$(
     $MAKE -f "$makefile" \
       --no-print-directory \
-      "${args[@]}" \
+      $rule \
       2>"$stderr" | grep -v 'Nothing to be done for'
   )
 }

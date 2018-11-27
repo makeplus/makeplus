@@ -8,7 +8,7 @@ DOCKER_APP := simple-http-server
 
 ${+require-command(docker)}
 
-start: ${+!docker-running(%DOCKER_APP)!} \
+start: ${+!bin/docker-running(%DOCKER_APP)!} \
 	${+docker-built(%DOCKER_APP)|build}
 	docker run --rm -tdp 8000:80 $<
 
