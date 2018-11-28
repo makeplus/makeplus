@@ -1,6 +1,6 @@
-include $(shell ../../bin/make+)
+include $(shell make+)
 
-50-50 = return $((RANDOM%2))
+50-50 = return $((RANDOM % 2))
 
 fish: 1-fish $(+50-50?2-fish)
 
@@ -8,9 +8,9 @@ fish: 1-fish $(+50-50?2-fish)
 2-fish: $(+50-50?red-2-fish|blue-2-fish)
 
 %-1-fish:
-	@echo -e "$($(@:%-1-fish=%))$$fish$(norm)"
+	@echo -e "$($*)$$fish$(norm)"
 %-2-fish:
-	@echo -e "$($(@:%-2-fish=%))$$fish$(norm)"
+	@echo -e "$($*)$$fish$(norm)"
 
 define fish
                      ___            __________

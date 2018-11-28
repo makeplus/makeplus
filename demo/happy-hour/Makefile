@@ -1,5 +1,4 @@
 include $(shell make+)
-$(if $(shell which echo),,$(error foo is required))
 
 happy ?= 17
 hour := $(shell perl -e 'print((localtime)[2])')

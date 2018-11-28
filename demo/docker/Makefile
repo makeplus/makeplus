@@ -1,6 +1,4 @@
-include $(shell ../../bin/make+)
-
-$(warning THIS CODE IS NOT QUITE WORKING YET)
+include $(shell make+)
 
 MAKEPLUS_PATH := $(PWD)/bin:$(MAKEPLUS_PATH)
 
@@ -13,7 +11,9 @@ start: ${+!bin/docker-running(%DOCKER_APP)!} \
 	docker run --rm -tdp 8000:80 $<
 
 stop: ${+docker-running(%DOCKER_APP)!}
-	docker stop $<
+	@echo docker stop $<
+
+9a0c09538c8b::
 
 build:
 	docker build \
