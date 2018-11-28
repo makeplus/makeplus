@@ -121,3 +121,20 @@ test: $(+!true?yes)
 test: $(+true!) $(+true!) ; @echo OK
 --- ^base
 --- out: OK
+
+=== $(+!false!) $(+false|yes)
+--- make
+test: $(+!false!) $(+false|yes) ; @echo OK
+--- ^base
+--- out
+YES
+OK
+
+=== $(+!false!) $(+false|yes)
+--- make
+test: $(+!false!) \
+      $(+false|yes) ; @echo OK
+--- ^base
+--- out
+YES
+OK
