@@ -94,7 +94,7 @@ sub parse_makefile {
       my $rulespec = $1;
 
       while ($line =~ s/\\$//) {
-        defined(my $next = <>) or last;
+        defined(my $next = <IN>) or last;
         chomp $next;
         $line .= $next;
       }
