@@ -1,10 +1,5 @@
-- v0.0.1
-  - Get demos working
-    - synopsis
-    - red-fish-blue-fish
-    - docker-server
-
 - v0.0.2
+  - Get demo docker-server working
   - Add CI (travis)
   - Set up DNS for makeplus.org
   - Make makeplus.org website (site branch)
