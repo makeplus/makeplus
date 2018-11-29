@@ -47,7 +47,7 @@ computer systems, and MakePlus has very minimal prerequisites.</p>
 weekday := $(shell perl -e 'print((localtime)[6])')
 sunday = [[ $1 -eq 0 ]]
 
-greeting: ${+sunday(%weekday)?message|resting}
+greeting: ${+!sunday(%weekday)?message|resting}
 
 message: ; @echo 'Hello, world!'
 
@@ -60,8 +60,10 @@ $(+require-command perl)
 normal GNU Makfile, except for things that begin with a <code>+</code>.</p>
 <p>Note the 'greeting' rule. It has a prerequisite that calls a test function
 (defined inline) passing it an argument (from a variable) and calls one of two
-different rules depending on the result.</p>
+different rules depending on the result. The <code>!</code> in front of <code>sunday</code> reverses
+the decision. In other words, assert it is <em>not</em> Sunday.</p>
 <p>The last line is a simple function to make sure a command (<code>perl</code> in this case)
-is installed. It it isn't the Makefile will stop.</p></article>
+is installed. If it isn't the Makefile will stop.</p>
+<p>See the "Demos" link above for lots more examples.</p></article>
 </body>
 </html>

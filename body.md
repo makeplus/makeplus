@@ -34,7 +34,7 @@ include $(shell make+)
 weekday := $(shell perl -e 'print((localtime)[6])')
 sunday = [[ $1 -eq 0 ]]
 
-greeting: ${+sunday(%weekday)?message|resting}
+greeting: ${+!sunday(%weekday)?message|resting}
 
 message: ; @echo 'Hello, world!'
 
@@ -50,7 +50,10 @@ normal GNU Makfile, except for things that begin with a `+`.
 
 Note the 'greeting' rule. It has a prerequisite that calls a test function
 (defined inline) passing it an argument (from a variable) and calls one of two
-different rules depending on the result.
+different rules depending on the result. The `!` in front of `sunday` reverses
+the decision. In other words, assert it is *not* Sunday.
 
 The last line is a simple function to make sure a command (`perl` in this case)
-is installed. It it isn't the Makefile will stop.
+is installed. If it isn't the Makefile will stop.
+
+See the "Demos" link above for lots more examples.
