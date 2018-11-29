@@ -30,11 +30,14 @@ install:
 	install -d $(INSTALL_SHARE)
 	install share/$(NAME)/* $(INSTALL_SHARE)
 
+gh-pages note talk:
+	git worktree add -f $@ $@
+
 clean:
 	rm -fr test/.testml
 
 realclean: clean
-	rm -fr .testml
+	rm -fr .testml gh-pages note talk
 
 #------------------------------------------------------------------------------
 $(TESTML_ROOT):
