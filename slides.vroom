@@ -12,9 +12,7 @@ vimrc: |
   au BufRead * syn match vroom_command "\v^\s*\$.*$"
   hi vroom_command  term=bold,italic,underline ctermfg=Yellow
 
-  map j /^\s\+\$<cr>
-  map ' :set bg=light<cr>
-  map k ?^\s\+\$<cr>
+  map ' /^\s\+\$<cr>
   map 1 :w! Makefile<cr>
   map 2 :!perl -pi -e 's/^    //' Makefile && sed -i '/^\$/d' Makefile<cr>
   map 3 :exec '!clear;echo;echo;' . substitute(substitute(getline('.'), '^\s\+\$\s\+', '', ''), '\~', '$t/', 'g')<cr>
@@ -76,8 +74,11 @@ November 29 2018
 +* Who loves Makefiles?
 +* Who hates Makefile?
 
-+  Deeper knowledge of 'make' and the shell
-  has rewarded me most as a programmer.
++* make is a great automation tool
++* It lacks flexible dependency checking...
+
++* UNTIL NOW!!!
+
 ----
 == Introducing MakePlus
 
@@ -110,18 +111,20 @@ yes no:
 
 ---- .mk
 # Normal Makefile rule:
-file1: file2
+file: file2
 
 # MakePlus:
-file2: $(+func2?this2)
+file: $(+func?this)
 
-+file3: ${+func3(foo,42,%VAR)?this3}
++file: $(+func|this)
 
-+file4: $(+func4?this4|that4)
++file: $(+func?this|that)
 
-+file5: $(+func5!)
++file: ${+func(foo,42,%VAR)?this}
 
-+file6: $(+!func6?this6)
++file: $(+func!)
+
++file: $(+!func?this)
 
 ---- .mk
 $ make fish

@@ -1,6 +1,6 @@
 source ../.rc
 
-docker rmi -f simple-http-server
+docker rmi --no-prune -f simple-http-server
 
 vroom clean
 
