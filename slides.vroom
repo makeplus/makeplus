@@ -70,14 +70,29 @@ November 29 2018
       ██▄▄▄██  ██    ██  ██▄▄▄▄▄▄  ▄██  ██▄     ██               ▄██  ██▄   ██▄▄▄██  ▄██  ██▄   ▄▄██▄▄   ██   ███
         ▀▀▀▀   ▀▀    ▀▀▀ ▀▀▀▀▀▀▀▀  ▀▀    ▀▀     ▀▀               ▀▀    ▀▀     ▀▀▀▀   ▀▀    ▀▀   ▀▀▀▀▀▀   ▀▀   ▀▀▀
 ----
+== Who Uses make and Makefiles?
+
++* Who has written Makefiles?
++* Who loves Makefiles?
++* Who hates Makefile?
+
++  Deeper knowledge of 'make' and the shell
+  has rewarded me most as a programmer.
+----
 == Introducing MakePlus
 
-* MakePlus is new software to improve make
-* It is still just plain old GNU make
+* MakePlus is new software to improve GNU make
+
+* It's just plain old Makefiles
+
 * Plus some cool new features
   * Functional rule dependency
     (Functions instead of just timestamps)
+
 * You turn MakePlus on with one include
+
+    include $(shell make+)
+
 * The new syntax things begin with a '+'
 
 ---- .mk
@@ -92,6 +107,21 @@ yes-or-no: $(+maybe?yes|no)
 
 yes no:
 	@echo $@ | tr a-z A-Z
+
+---- .mk
+# Normal Makefile rule:
+file1: file2
+
+# MakePlus:
+file2: $(+func2?this2)
+
++file3: ${+func3(foo,42,%VAR)?this3}
+
++file4: $(+func4?this4|that4)
+
++file5: $(+func5!)
+
++file6: $(+!func6?this6)
 
 ---- .mk
 $ make fish
@@ -148,7 +178,7 @@ norm = \033[39m
 * Variables can use almost *any* characters
   * No spaces = : #
 
-* Lots of make magic
+* Lots of make magic under the hood
 * But simple on the outside
 
 ---- .mk
