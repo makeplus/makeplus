@@ -41,7 +41,7 @@ this line at the top of your Makefile:
 include $(shell make+)
 ```
 
-Now you have a new world of extensions available to use.
+Now you have a new world of Makefile capability available to use.
 
 # MakePlus Usage
 
@@ -54,9 +54,9 @@ Consider this Makefile:
 ```
 include $(shell make+)
 
-$(+require-command echo)
+${+require-command(echo)}
 
-maybe = $((RANDOM%2))
+maybe = $((RANDOM % 2))
 
 rule: $(+maybe?yes|no)
 
@@ -66,8 +66,9 @@ yes no:
 
 All MakePlus additions begin with a `+` character.
 
-The `$(+require-command echo)` line is a simple way for a Makefile to declare
-its dependency on a system command. See "MakePlus Special Commands" below.
+The `${+require-command(echo)}` line is a simple way for a Makefile to declare
+its dependency on a system command (in this case `echo`). See "MakePlus Special
+Commands" below.
 
 The primary capability to use MakePlus for is function based dependency
 checking. The rule prerequisite `$(+maybe?yes|no)` says call the `maybe`
@@ -114,7 +115,7 @@ No whitespace is allowed in these expressions. What you are creating here are
 
 If no `!` (must) `?` (then) or `|` (else) follows the check, the 'then' rule
 uses the same name as the check function (including the + and ! but excluding
-any argumnents).
+any arguments).
 
 Makefile variable expansion here uses `%VAR` (instead of normal `$(VAR)`).
 
@@ -243,7 +244,34 @@ These basic utilities are already installed on most systems:
   Perl is not needed if you bundle MakePlus directly into your project. See
   "Per Project Install" above.
 
-# Testing
+# Development and Contribution
+
+Nothing great is created by one person in isolation. If you like the concept of
+MakePlus and have ideas about how it currently is not good enough, please
+contribute!
+
+* Report bugs or feature ideas
+
+  https://github.com/makeplus/makeplus/issues
+
+* Chat with MakePlus developers
+
+  `#makeplus` on irc.freenode.net
+
+## Debugging
+
+MakePlus generates a temporary Makefile that you never see. To see it, set
+`MAKEPLUS_MAKEFILE` environment variable to a file path. If the file does not
+exist, MakePlus will put the generated file there. If it does exist already,
+MakePlus will use it. That way you can actually modify it to figure things out.
+
+Use GNU make's special variables to print Makefile processing info:
+
+* `$(info ...)`
+* `$(warning ...)`
+* `$(error ...)`
+
+## Testing
 
 To run the MakePlus test suite, clone the source repository per above, and run
 `make test` from the top level directory.
@@ -262,6 +290,21 @@ will be very soon. All the important things are really working. See the `test`
 suite if you are curious.
 
 # Change Log
+
+* **v0.0.2 - Nov 29 2018**
+
+  * Made the http://makeplus.net website
+  * Implement the special commands processing
+  * Implement "must" (+test-cond!) stopping on fail
+  * Add Development and Contribution section to doc
+  * Get automatic make variables working with MakePlus prereqs
+  * Add Travis CI testing
+  * Got docker-server demo working properly
+  * Add a happy-hour demo
+  * Improve all demos
+  * `MAKEPLUS_PATH` is variable of directories to find test functions
+  * Fix a couple test fails with OSX output
+  * Add ability to test failure conditions
 
 * **v0.0.1 - Nov 24 2018**
 
