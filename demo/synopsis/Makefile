@@ -1,4 +1,4 @@
-include $(shell ../../bin/make+)
+include $(shell bin/make+)
 
 maybe = return $((RANDOM % 2))
 

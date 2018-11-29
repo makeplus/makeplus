@@ -16,10 +16,10 @@ main() {
     cmd=${cmd#\\}
     eval "makeplus-inline-check() { $cmd; }"
 
-    out=$(PATH="$path" makeplus-inline-check $args) || rc=$?
+    out=$(PATH="$path:$PATH" makeplus-inline-check $args) || rc=$?
 
   else
-    out=$(PATH="$path" "$cmd" $args) || rc=$?
+    out=$(PATH="$path:$PATH" "$cmd" $args) || rc=$?
   fi
 
   [[ -z ${MAKEPLUS_DEBUG-} ]] ||

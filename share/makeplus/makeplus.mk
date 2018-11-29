@@ -13,7 +13,7 @@ MAKEPLUS_ROOT := $(patsubst \
 # Set MAKEPLUS variables:
 MAKEPLUS_BIN := $(MAKEPLUS_ROOT)/bin
 MAKEPLUS_LIB := $(MAKEPLUS_ROOT)/lib/makeplus
-MAKEPLUS_PATH := $(MAKEPLUS_LIB):$(PATH)
+MAKEPLUS_PATH := $(MAKEPLUS_LIB)
 
 # Generate the working end of MakePlus, and include the result:
 include $(shell \

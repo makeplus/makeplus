@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+name=$1
+
+output=$(docker images "$name" | tail -n+2)
+
+if [[ -z $output ]]; then
+  exit 1
+fi
+
+# Check dockerfile mod time against docker build time
+if [[ -e Dockerfile ]]; then
+  built_time=$(
+    date -d "$(docker image inspect simple-http-server |
+      jq '.[0].Created' -r)" +%s
+  )
+  docker_time=$(stat -c %Y Dockerfile)
+
+  if [[ $docker_time -ge $built_time ]]; then
+    exit 1
+  fi
+fi
+
+echo "'x'"
+exit 0

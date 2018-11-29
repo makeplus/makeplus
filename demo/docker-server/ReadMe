@@ -1,0 +1,21 @@
+This demo is a possible real-world situation. You want to start a Docker
+container that runs a server, but:
+
+* Not if it is already running
+  * In that case just quit, with a useful message
+* Not if the docker image needs to be built or rebuilt
+  * Check if image even exists yet
+  * If so, check that the `Dockerfile` hasn't been changed since build time
+
+This *seems* like normal Makefile stuff, until you realize that `make` can't
+make decisions over these kind of conditions... Luckily MakePlus can! Just run
+`make start`.
+
+The `make stop` command will stop the server, but only if it is running. If it
+is running the checker function prints the container id to stdout, and it ends
+up in `$<` so the docker stop command works.
+
+The `make test` command calls the server and prints `PASS` or `FAIL`.
+
+The `make clean` command will delete the docker server image, so you can stop
+over.

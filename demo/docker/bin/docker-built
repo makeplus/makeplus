@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-tag=$1
-
-output=$(docker images "$tag" | tail -n+2)
-
-[[ -n $output ]]

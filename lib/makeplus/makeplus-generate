@@ -217,14 +217,18 @@ $(eval makeplus_cmd = $(if $(value $1),\$(value $1),$1)) \
 $(eval makeplus_out = $(makeplus_check)) \
 $(eval makeplus_rc = $(firstword $(makeplus_out))) \
 $(eval makeplus_text = $(wordlist 2,99999,$(makeplus_out))) \
-$(if $(filter $(makeplus_rc),0),$(makeplus_text),\
+$(if $(filter $(makeplus_rc),0),$(makeplus_text), \
 $(if $(filter $(makeplus_rc),2),makeplus-stop-$1))
 endef
 
-# MakePlus stop rules:
-makeplus-stop-<ref-name>:
-	@echo "STOP - $(stop-false)"; exit 1
+# Special implicit rules to defeat rules that are single quoted:
+'%':
+	@true
+
+.SECONDEXPANSION:
 ...
+
+
 
   return $o;
 }
