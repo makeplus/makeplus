@@ -33,7 +33,7 @@ own.
 MakePlus is a set of extensions that build on top of GNU make. It provides you
 with a set of ready-to-use condition testing functions, and allows you to
 easily write your own. Everything from your old Makefile still works, but now
-you can have a lot more control, with little effort.
+you have a lot more power, with little effort.
 
 MakePlus can be used with any existing GNU Makefile. All you need to do is add
 this line at the top of your Makefile:
@@ -197,35 +197,37 @@ shell's 'rc' file to make it persistent.
 source /path/to/makeplus/.rc
 ```
 
-## Per Project Install
-
-**NOTE: NOT YET IMPLEMENTED**
+## Local Project Install
 
 If you want to use MakePlus in your project but not require your users or
 project developers to have it installed, you can bundle it into your project.
 MakePlus makes this super easy.
 
-Assuming you have installed MakePlus already (see above), you can include
-MakePlus files directly (anywhere) in your project with this command:
+You will need to have MakePlus installed already, as per above. Then...
+
+If you are already using MakePlus in your project Makefile already, just run:
 ```
-makeplus --local .make
+make +local
 ```
 
-This command will scan your Makefile, and include only the elements of MakePlus
-that you require. It will copy all the files into the `.make` directory (as
-specified in the command above).
-
-To use the local MakePlus files included in your project, your Makefile should
-contain a line like this:
+If you are starting from scratch, run:
 ```
-include $(shell ./.make/bin/make+)
+make+ --local
 ```
 
-To update the included files (when your Makefile usage changes or your upgrade
-MakePlus) simply run:
-```
-make +update
-```
+In either case, this will install all the parts of MakePlus you are using into
+the `./.makeplus/` directory. It will change your Makefile to use the local
+version. If you started from scratch without a Makefile, it will create one.
+
+This process will scan your Makefile, and include only the elements of MakePlus
+that you require. At any time after this, you can run `make +local` again to
+sync your local files with the installed version, according to your current
+needs.
+
+NOTE: If you want to rename the local installation directory, all you have to
+do is run `mv .makeplus <new-directory-name>` and then change your Makefile
+`include` line to point to the new location. Future runs of `make +local` will
+use the new location.
 
 # Prerequisites
 
@@ -242,7 +244,7 @@ These basic utilities are already installed on most systems:
 * Perl 5 (any version)
 
   Perl is not needed if you bundle MakePlus directly into your project. See
-  "Per Project Install" above.
+  "Local Project Install" above.
 
 # Development and Contribution
 
@@ -250,11 +252,11 @@ Nothing great is created by one person in isolation. If you like the concept of
 MakePlus and have ideas about how it currently is not good enough, please
 contribute!
 
-* Report bugs or feature ideas
+* Share feature ideas or report bugs:
 
   https://github.com/makeplus/makeplus/issues
 
-* Chat with MakePlus developers
+* Chat with MakePlus developers:
 
   `#makeplus` on irc.freenode.net
 
@@ -284,7 +286,7 @@ for you. See <https://github.com/testml-lang/testml>.
 This is a very early version of the MakePlus software. It seems to be working
 out fantastically well so far, but I expect the unexpected. :)
 
-Some of the ancillary features like "Per Project Install", `makeplus
+Some of the ancillary features like "Local Project Install", `makeplus
 --local`, `make +update` (in the docs above) are not yet implemented, but
 will be very soon. All the important things are really working. See the `test`
 suite if you are curious.
