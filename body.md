@@ -21,8 +21,8 @@ By adding one **include** line to the start of your `Makefile`, you get:
 See these links for more info:
 
 * [Source Code](https://github.com/makeplus/makeplus)
-* [Installation](https://github.com/makeplus/makeplus#makeplus-installation)
-* [Documentation](https://github.com/makeplus/makeplus#makeplus)
+* [Installation](https://github.com/makeplus/makeplus/blob/master/ReadMe.md#makeplus-installation)
+* [Documentation](https://github.com/makeplus/makeplus/blob/master/ReadMe.md#makeplus)
 * [Demos](https://github.com/makeplus/makeplus/tree/master/demo)
 * [Issues](https://github.com/makeplus/makeplus/issues)
 * Chat in #makeplus on irc.freenode.net
