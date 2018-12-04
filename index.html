@@ -18,18 +18,21 @@ body {
 <body>
 <article class="markdown-body">
 <h1 id="makeplus">MakePlus</h1>
-<p><strong>MakePlus</strong> is a new simple software package that adds great new capabilities
-to the ubiquitous GNU <code>make</code> tool. GNU make can be found on almost all modern
-computer systems, and MakePlus has very minimal prerequisites.</p>
-<p>By adding one simple line to the start of you <code>Makefile</code>, you get:</p>
+<p><strong>MakePlus</strong> is a simple software package that adds great new capabilities
+to the ubiquitous <strong>GNU <code>make</code></strong> tool. GNU <code>make</code> can be found on almost all
+modern computer systems. MakePlus has very minimal prerequisites and can even
+be added as a single file to your project.</p>
+<p>By adding one <strong>include</strong> line to the start of your <code>Makefile</code>, you get:</p>
 <ul>
-<li>Functional prerequisite testing (instead of just file timestamps)</li>
-<li>Use testing functions from MakePlus' standard library</li>
-<li>Use any testing program in your PATH that returns 0 or 1</li>
-<li>Define test functions inline in your Makefile</li>
-<li>Automatic variables (like <code>$&lt;</code>) can use output from checking functions</li>
-<li>Special commands to do common things</li>
-<li>ALl the new features integrate nicely with the standard make features</li>
+<li><strong>Functional Prerequisite Testing</strong> (instead of just file timestamps)<ul>
+<li>Use testing functions from the <strong>MakePlus Standard Library</strong></li>
+<li>Use any testing program in your <strong>PATH</strong> that returns 0 or 1</li>
+<li>Define <strong>inline testing functions</strong> in your Makefile</li></ul></li>
+<li><strong>Special Commands</strong> to do common things</li>
+<li><strong>Special Targets</strong> for MakePlus related tasks</li>
+<li>MakePlus features integrate nicely with the standard make features<ul>
+<li>Use Makefile variables in your prerequisite testing functions</li>
+<li>Automatic variables (like <code>$&lt;</code>) can use output from testing functions</li></ul></li>
 </ul>
 <p>See these links for more info:</p>
 <ul>
@@ -44,16 +47,15 @@ computer systems, and MakePlus has very minimal prerequisites.</p>
 <p>Here's a Makefile that prints a greeting to the world, except on Sunday:</p>
 <pre><code class="make language-make">include $(shell make+)
 
-weekday := $(shell perl -e 'print((localtime)[6])')
-sunday = [[ $1 -eq 0 ]]
+today = $(shell perl -e 'print((localtime)[6])')
 
-greeting: ${+!sunday(%weekday)?message|resting}
+is-sunday = [ $1 -eq 0 ]
+
+greeting: ${+!is-sunday(%today)?message|resting}
 
 message: ; @echo 'Hello, world!'
 
 resting: ; @echo "Sorry I'm resting today."
-
-$(+require-command perl)
 </code></pre>
 <p>Run <code>make greeting</code>.</p>
 <p>The first line triggers all the MakePlus magic! The rest of the Makefile is a
@@ -61,9 +63,7 @@ normal GNU Makfile, except for things that begin with a <code>+</code>.</p>
 <p>Note the 'greeting' rule. It has a prerequisite that calls a test function
 (defined inline) passing it an argument (from a variable) and calls one of two
 different rules depending on the result. The <code>!</code> in front of <code>sunday</code> reverses
-the decision. In other words, assert it is <em>not</em> Sunday.</p>
-<p>The last line is a simple function to make sure a command (<code>perl</code> in this case)
-is installed. If it isn't the Makefile will stop.</p>
-<p>See the "Demos" link above for lots more examples.</p></article>
+the decision. In other words, test that today is <em>not</em> Sunday.</p>
+<p>See the "Demos" link above for more examples.</p></article>
 </body>
 </html>

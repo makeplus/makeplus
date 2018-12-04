@@ -11,4 +11,4 @@ index.html: head.html body.html foot.html
 	rm -f body.html
 
 %.html: %.md
-	showdown makehtml -i $< -o $@
+	showdown makehtml --disableForced4SpacesIndentedSublists -i $< -o $@
