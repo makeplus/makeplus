@@ -34,15 +34,6 @@ be added as a single file to your project.</p>
 <li>Use Makefile variables in your prerequisite testing functions</li>
 <li>Automatic variables (like <code>$&lt;</code>) can use output from testing functions</li></ul></li>
 </ul>
-<p>See these links for more info:</p>
-<ul>
-<li><a href="https://github.com/makeplus/makeplus">Source Code</a></li>
-<li><a href="https://github.com/makeplus/makeplus/blob/master/ReadMe.md#makeplus-installation">Installation</a></li>
-<li><a href="https://github.com/makeplus/makeplus/blob/master/ReadMe.md#makeplus">Documentation</a></li>
-<li><a href="https://github.com/makeplus/makeplus/tree/master/demo">Demos</a></li>
-<li><a href="https://github.com/makeplus/makeplus/issues">Issues</a></li>
-<li>Chat in #makeplus on irc.freenode.net</li>
-</ul>
 <h2 id="examplemakefileusingmakeplus">Example Makefile using MakePlus</h2>
 <p>Here's a Makefile that prints a greeting to the world, except on Sunday:</p>
 <pre><code class="make language-make">include $(shell make+)
@@ -64,6 +55,14 @@ normal GNU Makfile, except for things that begin with a <code>+</code>.</p>
 (defined inline) passing it an argument (from a variable) and calls one of two
 different rules depending on the result. The <code>!</code> in front of <code>sunday</code> reverses
 the decision. In other words, test that today is <em>not</em> Sunday.</p>
-<p>See the "Demos" link above for more examples.</p></article>
+<h2 id="moremakeplusinfo">More MakePlus Info</h2>
+<ul>
+<li><a href="https://github.com/makeplus/makeplus">Source Code</a></li>
+<li><a href="https://github.com/makeplus/makeplus/blob/master/ReadMe.md#makeplus-installation">Installation</a></li>
+<li><a href="https://github.com/makeplus/makeplus/blob/master/ReadMe.md#makeplus">Documentation</a></li>
+<li><a href="https://github.com/makeplus/makeplus/tree/master/demo">Demos</a></li>
+<li><a href="https://github.com/makeplus/makeplus/issues">Issues</a></li>
+<li>Chat in #makeplus on irc.freenode.net</li>
+</ul></article>
 </body>
 </html>
