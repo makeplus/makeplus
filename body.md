@@ -60,7 +60,7 @@ Copy this command and run it in a terminal:
 Every time you press enter it will run `make fish` which should display 1 or 2
 red or blue fish. The Makefile is
 [here](https://github.com/makeplus/makeplus/blob/master/demo/red-fish-blue-fish/Makefile).
-See if you figure it out. (It's not hard. :)
+See if you can figure it out. (It's not hard. :)
 
 ## More MakePlus Info
 
