@@ -46,6 +46,22 @@ Note the 'greeting' rule. It has a prerequisite that calls a test function
 different rules depending on the result. The `!` in front of `sunday` reverses
 the decision. In other words, test that today is *not* Sunday.
 
+## Try It Now
+
+MakePlus comes with a bunch of demo Makefiles that are easy to run. Try out the
+[red-fish-blue-fish](https://www.mfwi.edu/MFWI/Recordings/One%20Fish.pdf) demo
+now!
+
+Copy this command and run it in a terminal:
+```
+(git clone https://github.com/makeplus/makeplus; source makeplus/.rc && cd makeplus/demo/red-fish-blue-fish && while true; do (set -x; make fish); echo press enter; read; done)
+```
+
+Every time you press enter it will run `make fish` which should display 1 or 2
+red or blue fish. The Makefile is
+[here](https://github.com/makeplus/makeplus/blob/master/demo/red-fish-blue-fish/Makefile).
+See if you figure it out. (It's not hard. :)
+
 ## More MakePlus Info
 
 * [Source Code](https://github.com/makeplus/makeplus)
