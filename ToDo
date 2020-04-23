@@ -1,16 +1,36 @@
-== ZR Talk
-- Adjust vroom to run Makefile slides
-- Finish talk
-- Practice Talk
-
+== Zip
+- Write a wiki page (Using MakePlus)
 
 == v0.0.3
-- Per Project Install
+- Fold makeplus.mk into makeplus-generate
+- Get rid of bin/makeplus
+
+- Add "%" rule for "" expansion return values
+  - Add tests for '%' and "%"
+- Add & for if?this&that|other&stuff
+- Implement "Local Project Install"
+- Return code API
+  - 0 true  - Possible deps on stdout
+  - 1 false - Possible reason message on stdout
+  - 2 true  - Non-dep "dep" info on stdout. Quote it for '%'. Use in $< $+ etc.
+  - 3 error - An internal failure happened that should stop make
+- Check `which bash` up front
+- Support include args
+  - include $(shell make+ shell=ksh make=nmake var=:= second=no)
 - Add = vs := support
+- Document more features in more detail
+  - Maybe write doc/makeplus.md
+- man page installation
+
+- Should all internal rules use :: ?
+
+- Support more shells (csh, sh, ksh) ?
+- Support more makes (cmake, bsdmake) ?
+
+
+== Standard Library Ideas
 - Write the `old` function
   - Support %@  ($$@ SECONDEXPANSION maybe?)
-
-== Ideas
 * Rules for something done but not recently
   * Git Pull done in past 24 hours
 * Something done at least once
