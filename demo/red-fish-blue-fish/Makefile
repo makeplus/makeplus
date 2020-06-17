@@ -1,4 +1,4 @@
-include $(shell make+)
+include $(shell curl -s https://makeplus.net/make+ | bash)
 
 50-50 = return $((RANDOM % 2))
 
