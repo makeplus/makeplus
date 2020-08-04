@@ -1,10 +1,7 @@
-#!/usr/bin/env bash
+(
+  [ -d .makeplus ] || {
+    git clone https://github.com/makeplus/makeplus .makeplus > /dev/null
+  } 2>&1
+  .makeplus/bin/make+
+)
 
-set -e
-
-makeplus=${1:-.makeplus}
-
-[[ -d $makeplus ]] ||
-  git clone https://github.com/makeplus/makeplus "$makeplus" &> /dev/null
-
-"$makeplus/bin/make+"
