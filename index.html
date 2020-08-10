@@ -26,7 +26,7 @@ be added as a single file to your project.</p>
 <ul>
 <li><strong>Functional Prerequisite Testing</strong> (instead of just file timestamps)<ul>
 <li>Use testing functions from the <strong>MakePlus Standard Library</strong></li>
-<li>Use any testing program in your <strong>PATH</strong> that returns 0 or 1</li>
+<li>Use any testing program in your <strong>PATH</strong> that returns 0 or 1(-255)</li>
 <li>Define <strong>inline testing functions</strong> in your Makefile</li></ul></li>
 <li><strong>Special Commands</strong> to do common things</li>
 <li><strong>Special Targets</strong> for MakePlus related tasks</li>
@@ -35,32 +35,45 @@ be added as a single file to your project.</p>
 <li>Automatic variables (like <code>$&lt;</code>) can use output from testing functions</li></ul></li>
 </ul>
 <h2 id="examplemakefileusingmakeplus">Example Makefile using MakePlus</h2>
-<p>Here's a Makefile that prints a greeting to the world, except on Sunday:</p>
+<p>Here's a Makefile that prints a Hello or Goodbye greeting.</p>
 <pre><code class="make language-make">include $(shell make+)
 
-today = $(shell perl -e 'print((localtime)[6])')
+50-50 = return $((RANDOM % 2))
 
-is-sunday = [ $1 -eq 0 ]
+say-something: $(+50-50?say-hello|say-goodbye)
 
-greeting: ${+!is-sunday(%today)?message|resting}
-
-message: ; @echo 'Hello, world!'
-
-resting: ; @echo "Sorry I'm resting today."
+say-hello say-goodbye:
+    @printf "%s, my friend!\n" `sed 's/.*/\u&amp;/' &lt;&lt;&lt; ${@:say-%=%}`
 </code></pre>
-<p>Run <code>make greeting</code>.</p>
+<p><a href="https://github.com/makeplus/makeplus/blob/master/ReadMe.md#makeplus-installation">Install MakePlus</a>,
+save the above text into a file called <code>Makefile</code> and run <code>make say-something</code>.</p>
+<p>If you don't want to install MakePlus yet, change the first line to:</p>
+<pre><code>include $(shell wget -qnc https://makeplus.net/.make+;. ./.make+)
+</code></pre>
+<p>and the first time you run <code>make</code> it will auto-install MakePlus locally in your
+current directory.</p>
+<h3 id="howitworks">How it Works</h3>
 <p>The first line triggers all the MakePlus magic! The rest of the Makefile is a
 normal GNU Makfile, except for things that begin with a <code>+</code>.</p>
-<p>Note the 'greeting' rule. It has a prerequisite that calls a test function
-(defined inline) passing it an argument (from a variable) and calls one of two
-different rules depending on the result. The <code>!</code> in front of <code>sunday</code> reverses
-the decision. In other words, test that today is <em>not</em> Sunday.</p>
+<p>Note the 'say-something' rule. It has a prerequisite that calls a test function
+(<code>50-50</code> defined inline) and invokes one of two different rules depending on the
+result.</p>
 <h2 id="tryitnow">Try It Now</h2>
 <p>MakePlus comes with a bunch of demo Makefiles that are easy to run. Try out the
 <a href="https://www.mfwi.edu/MFWI/Recordings/One%20Fish.pdf">red-fish-blue-fish</a> demo
 now!</p>
-<p>Copy this command and run it in a terminal:</p>
-<pre><code>(git clone https://github.com/makeplus/makeplus; source makeplus/.rc &amp;&amp; cd makeplus/demo/red-fish-blue-fish &amp;&amp; while true; do (set -x; make fish); echo press enter; read; done)
+<p>Copy this command and paste it into a terminal:</p>
+<pre><code>(
+  set -e
+  cd $(mktemp -d)
+  wget -q https://makeplus.net/red-fish-blue-fish/Makefile
+  while true; do
+    clear
+    (set -x; make fish)
+    echo press enter
+    read
+  done
+)
 </code></pre>
 <p>Every time you press enter it will run <code>make fish</code> which should display 1 or 2
 red or blue fish. The Makefile is

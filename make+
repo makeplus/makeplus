@@ -1,4 +1,1 @@
-[ -d .makeplus ] ||
-  git clone https://github.com/makeplus/makeplus .makeplus 1>&2 2>/dev/null
-
-.makeplus/bin/make+
+.make+
