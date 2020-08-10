@@ -30,6 +30,17 @@ install:
 	install -d $(INSTALL_SHARE)
 	install share/$(NAME)/* $(INSTALL_SHARE)
 
+check:
+	shellcheck .rc
+	shellcheck bin/make+
+	shellcheck bin/makeplus
+	shellcheck lib/makeplus/env
+	shellcheck lib/makeplus/makeplus-check
+	perl -c lib/makeplus/makeplus-generate
+	shellcheck lib/makeplus/require-command
+	make --no-print-directory -n
+	@#make --no-print-directory -f share/makeplus/makeplus.mk -n
+
 gh-pages note talk:
 	git worktree add -f $@ $@
 
@@ -42,4 +53,4 @@ realclean: clean
 #------------------------------------------------------------------------------
 $(TESTML_ROOT):
 	git clone --depth=1 --quiet $(TESTML_REPO) $@
-	(cd $@ && git fetch origin ext/perl5:ext/perl5 && make ext/perl5)
+	(cd $@ && git fetch origin ext/perl:ext/perl && make ext/perl)
