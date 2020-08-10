@@ -1,4 +1,4 @@
-SHELL = bash
+SHELL := bash
 
 # Make sure we are being run by GNU make:
 ifneq ($(shell [[ `${MAKE} -v` =~ ^GNU ]] || echo fail),)
