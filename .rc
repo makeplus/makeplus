@@ -1,6 +1,4 @@
-#! sh
-
-# shellcheck disable=2128
+# shellcheck shell=sh disable=2128
 
 unset MAKEPLUS_ROOT
 
@@ -14,3 +12,5 @@ if test -n "$MAKEPLUS_ROOT"; then
 else
   echo "Could not enable 'MakePlus' for your environment"
 fi
+
+# vim: ft=sh:
