@@ -5,7 +5,7 @@ set -eu
 command=${1-}
 version=${2-}
 
-if ! which "$command" &>/dev/null; then
+if ! command -v "$command" >/dev/null; then
   echo "The command '$command' is required but not available"
   exit 1
 fi

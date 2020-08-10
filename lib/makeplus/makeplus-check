@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=2086
+
 main() {
   set -eu -o pipefail
 
