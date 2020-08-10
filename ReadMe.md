@@ -5,32 +5,33 @@ MakePlus
 
 # Synopsis
 
-Your Makefile:
+Save this text in a file called `Makefile`:
 ```
 include $(shell make+)
 
-maybe = return $((RANDOM % 2))
+50-50 = return $((RANDOM % 2))
 
-rule: $(+maybe?yes|no)
+say-something: $(+50-50?say-hello|say-goodbye)
 
-yes no:
-	@echo $@ | tr a-z A-Z
+say-hello say-goodbye:
+	@printf "%s, my friend!\n" `sed 's/.*/\u&/' <<< ${@:say-%=%}`
 ```
 
-Running `make` will randomly print `YES` or `NO`.
+Running `make say-something` will randomly print either `Hello, my friend!` or
+`Goodbye, my friend!`.
 
 # Description
 
-GNU `make` is an amazing automation tool. It exists or is trivially available
-on almost all computer systems. It has been around for decades and has tons of
-useful features.
+GNU Make (the `make` command) is an amazing automation tool. It exists or is
+trivially available on almost all computer systems. It has been around for
+decades and has tons of useful features.
 
-The major drawback is that actions are only triggered by file modication,
-instead of user defined functions/conditions. For this reason, people
-continually reinvent Make, but the new solutions always have problems of their
-own.
+The major drawback of Make is that actions are only triggered by file
+modification time comparisons, instead of user defined functions/conditions.
+For this reason, people continually reinvent Make, but the new solutions always
+have problems of their own.
 
-MakePlus is a set of extensions that build on top of GNU make. It provides you
+MakePlus is a set of extensions that build on top of GNU Make. It provides you
 with a set of ready-to-use condition testing functions, and allows you to
 easily write your own. Everything from your old Makefile still works, but now
 you have a lot more power, with little effort.
@@ -48,7 +49,7 @@ Now you have a new world of Makefile capability available to use.
 When you add the `include $(shell make+)` line to the start of your Makefile,
 MakePlus silently scans your Makefile(s), generates an additional makefile
 (usually as a temp file) and includes it. The result is that you now have new
-powerful features added to your normal GNU make capabilites.
+powerful features added to your normal GNU Make capabilities.
 
 Consider this Makefile:
 ```
@@ -94,7 +95,7 @@ rule: `$` (`(`|`{`) `+` `!`?  <check-name> (`(` <arg-list> `)`)? \
 If that is too complicated to digest right now, here are some examples:
 ```
 rule1: $(+check)                     # If check then '+check'
-rule2: $(+check!)                    # check or HALT
+rule2: $(+check!)                    # check or HALT (exit 1)
 rule3: $(+check?this)                # If check then 'this'
 rule4: $(+check|that)                # check or 'that'
 rule5: $(+check?this|that)           # If check then 'this' else 'that'
@@ -105,13 +106,13 @@ rule9: $(+!check?this|that)          # If not check then
 ```
 
 That should give you an idea of what is possible. Note that if your check
-function requires arguments (in parentheses) you must use curly braces to
-enclose the construct.
+function requires arguments (in parentheses) you must use curly braces
+(`${...}`) to enclose the construct.
 
 No whitespace is allowed in these expressions. What you are creating here are
 **actual Makefile variables**! These allow any characters except whitespace,
 `=`, `:` and `#`. See
-<https://www.gnu.org/software/make/manual/html_node/Using-Variables.html>
+<https://www.gnu.org/software/make/manual/html_node/Using-Variables.html>.
 
 If no `!` (must) `?` (then) or `|` (else) follows the check, the 'then' rule
 uses the same name as the check function (including the + and ! but excluding
@@ -168,14 +169,34 @@ MakePlus automatically gives you special targets that always begin with a `+`.
   The `+makeplus` target will print out the version on MakePlus being used.
   This is a handy way to see if MakePlus is set up correctly in your Makefile.
 
-* `make +update`
+* `make +makeplus-update`
 
   Update a local the local MakePlus assets, if a project has localized them
   with the `makeplus --local ...` command.
 
 # MakePlus Installation
 
-First get the MakePlus source code from GitHub:
+There are several ways to install and use MakePlus.
+
+## Zero Install
+
+The simplest way to try MakePlus is to add this line to the top of your
+Makefile:
+```
+include $(shell wget -qnc https://makeplus.net/.make+;. ./.make+)
+```
+
+The first time you run `make`, it will download and run the tiny shell script
+called `.make+`. This script will `git clone` the makeplus repository into the
+`./.makeplus/` directory.
+
+Subsequent invocations will just work. The `wget` flags `-nc` (`--no-clobber`)
+will see that `.make+` already exists and do nothing. No network access is even
+needed at that point.
+
+## Actual Installs
+
+First clone the MakePlus source code from GitHub:
 ```
 git clone https://github.com/makeplus/makeplus /path/to/makeplus
 ```
@@ -286,12 +307,17 @@ for you. See <https://github.com/testml-lang/testml>.
 This is a very early version of the MakePlus software. It seems to be working
 out fantastically well so far, but I expect the unexpected. :)
 
-Some of the ancillary features like "Local Project Install", `makeplus
---local`, `make +update` (in the docs above) are not yet implemented, but
-will be very soon. All the important things are really working. See the `test`
-suite if you are curious.
+Some of the ancillary features like "Local Project Install", `make+ --local`,
+`make +makeplus-update` (in the docs above) are not yet implemented, but will
+be very soon. All the important things are really working. See the `test` suite
+if you are curious.
 
 # Change Log
+
+* **v0.0.2 - Aug 20 2020**
+
+  * Add zero-install instructions
+  * Update website
 
 * **v0.0.2 - Nov 29 2018**
 
@@ -349,4 +375,4 @@ Ingy döt Net <ingy@ingy.net>
 
 The MIT License (MIT)
 
-Copyright (c) 2018 Ingy döt Net
+Copyright (c) 2018-2020 Ingy döt Net
