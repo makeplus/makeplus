@@ -1,10 +1,10 @@
 MakePlus
 ========
 
-**MakePlus** is a simple software package that adds great new capabilities
-to the ubiquitous **GNU `make`** tool. GNU `make` can be found on almost all
-modern computer systems. MakePlus has very minimal prerequisites and can even
-be added as a single file to your project.
+**MakePlus** is a simple software package that adds great new capabilities to
+the ubiquitous **GNU Make** tool. The `make` command can be found on almost all
+modern computer systems. MakePlus has very minimal prerequisites and even has a
+auto-install incantation.
 
 By adding one **include** line to the start of your `Makefile`, you get:
 
@@ -67,7 +67,7 @@ Copy this command and paste it into a terminal:
   while true; do
     clear
     (set -x; make fish)
-    echo press enter
+    printf 'Press enter'
     read
   done
 )

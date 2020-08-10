@@ -18,10 +18,10 @@ body {
 <body>
 <article class="markdown-body">
 <h1 id="makeplus">MakePlus</h1>
-<p><strong>MakePlus</strong> is a simple software package that adds great new capabilities
-to the ubiquitous <strong>GNU <code>make</code></strong> tool. GNU <code>make</code> can be found on almost all
-modern computer systems. MakePlus has very minimal prerequisites and can even
-be added as a single file to your project.</p>
+<p><strong>MakePlus</strong> is a simple software package that adds great new capabilities to
+the ubiquitous <strong>GNU Make</strong> tool. The <code>make</code> command can be found on almost all
+modern computer systems. MakePlus has very minimal prerequisites and even has a
+auto-install incantation.</p>
 <p>By adding one <strong>include</strong> line to the start of your <code>Makefile</code>, you get:</p>
 <ul>
 <li><strong>Functional Prerequisite Testing</strong> (instead of just file timestamps)<ul>
@@ -70,7 +70,7 @@ now!</p>
   while true; do
     clear
     (set -x; make fish)
-    echo press enter
+    printf 'Press enter'
     read
   done
 )
