@@ -10,4 +10,4 @@
 --- make
 include $(shell bin/make+)
 --- out
-MakePlus v0.0.1
+MakePlus v0.0.2
