@@ -314,10 +314,12 @@ if you are curious.
 
 # Change Log
 
-* **v0.0.2 - Aug 20 2020**
+* **v0.0.3 - Aug 20 2020**
 
-  * Add zero-install instructions
-  * Update website
+  * Add auto-install instructions to doc
+  * Update website with auto-install instructions
+  * Update to docs and website
+  * Add demo/say-something
 
 * **v0.0.2 - Nov 29 2018**
 
